@@ -23,12 +23,68 @@ echo -e "${BOLD}Tybre.md — in10s Lab Company Setup${NC}"
 echo "────────────────────────────────────────"
 echo ""
 
-# ── Step 1: Install Tybre.md ─────────────────────────────────────────────────
-info "Installing Tybre.md..."
+# ── Step 1: Homebrew ──────────────────────────────────────────────────────────
+info "Homebrew 확인 중..."
+if command -v brew &>/dev/null; then
+  success "Homebrew 이미 설치됨: $(brew --version | head -1)"
+else
+  info "Homebrew 설치 중... (시간이 걸릴 수 있습니다)"
+  BREW_INSTALLER=$(mktemp /tmp/brew-installer-XXXXXX.sh)
+  trap 'rm -f "$BREW_INSTALLER"' EXIT
+  curl -fsSL -o "$BREW_INSTALLER" "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
+  NONINTERACTIVE=1 bash "$BREW_INSTALLER"
+  # Add brew to PATH for Apple Silicon and Intel
+  if [ -f "/opt/homebrew/bin/brew" ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    # Persist to shell profile
+    SHELL_PROFILE="$HOME/.zprofile"
+    grep -q 'homebrew' "$SHELL_PROFILE" 2>/dev/null || echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "$SHELL_PROFILE"
+  elif [ -f "/usr/local/bin/brew" ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+  success "Homebrew 설치 완료"
+fi
+echo ""
+
+# ── Step 2: Node.js (LTS) + npm ──────────────────────────────────────────────
+info "Node.js 확인 중..."
+if command -v node &>/dev/null; then
+  NODE_VER=$(node --version)
+  NPM_VER=$(npm --version)
+  success "Node.js 이미 설치됨: ${NODE_VER} / npm ${NPM_VER}"
+else
+  info "Node.js LTS 설치 중..."
+  brew install node
+  success "Node.js 설치 완료: $(node --version) / npm $(npm --version)"
+fi
+echo ""
+
+# ── Step 3: PostgreSQL (psql) ─────────────────────────────────────────────────
+info "PostgreSQL (psql) 확인 중..."
+if command -v psql &>/dev/null; then
+  PSQL_VER=$(psql --version)
+  success "psql 이미 설치됨: ${PSQL_VER}"
+else
+  info "PostgreSQL 설치 중..."
+  brew install postgresql@16
+  # Link psql to PATH
+  brew link --force postgresql@16
+  # Also add to PATH in case link doesn't cover current session
+  PG_BIN="$(brew --prefix postgresql@16)/bin"
+  export PATH="$PG_BIN:$PATH"
+  SHELL_PROFILE="$HOME/.zprofile"
+  grep -q 'postgresql' "$SHELL_PROFILE" 2>/dev/null || echo "export PATH=\"${PG_BIN}:\$PATH\"" >> "$SHELL_PROFILE"
+  success "PostgreSQL 설치 완료: $(psql --version 2>/dev/null || echo 'psql (재시작 후 사용 가능)')"
+fi
+echo ""
+
+# ── Step 4: Install Tybre.md ──────────────────────────────────────────────────
+info "Tybre.md 설치 중..."
 
 # Download installer to temp file to avoid curl | bash stdin conflict
 TYBRE_INSTALLER=$(mktemp /tmp/tybre-installer-XXXXXX.sh)
-trap 'rm -f "$TYBRE_INSTALLER"' EXIT
+# Append to existing trap if any
+trap 'rm -f "$TYBRE_INSTALLER" "$BREW_INSTALLER" 2>/dev/null' EXIT
 
 if ! curl -fsSL -o "$TYBRE_INSTALLER" "https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/install.sh"; then
   error "Tybre.md 설치 파일 다운로드 실패"
@@ -37,22 +93,35 @@ fi
 bash "$TYBRE_INSTALLER"
 echo ""
 
-# ── Step 2: Get user Google account email ────────────────────────────────────
+# ── Step 5: Claude Code ───────────────────────────────────────────────────────
+info "Claude Code 확인 중..."
+if command -v claude &>/dev/null; then
+  CLAUDE_VER=$(claude --version 2>/dev/null | head -1 || echo "unknown")
+  success "Claude Code 이미 설치됨: ${CLAUDE_VER}"
+else
+  info "Claude Code 설치 중..."
+  npm install -g @anthropic-ai/claude-code \
+    && success "Claude Code 설치 완료: $(claude --version 2>/dev/null | head -1 || echo 'ok')" \
+    || warn "Claude Code 설치 실패. 수동으로 설치하세요: npm install -g @anthropic-ai/claude-code"
+fi
+echo ""
+
+# ── Step 6: Get user Google account email ────────────────────────────────────
 printf "${BOLD}Google 계정 이메일을 입력하세요${NC} (예: you@company.com): "
 read -r USER_EMAIL </dev/tty
 
 if [ -z "$USER_EMAIL" ]; then
   warn "이메일을 입력하지 않았습니다. 프로젝트 자동 설정을 건너뜁니다."
-  success "Tybre.md 설치 완료!"
+  success "기본 설치 완료!"
   exit 0
 fi
 
-# ── Step 3: Build paths ───────────────────────────────────────────────────────
+# ── Step 7: Build paths ───────────────────────────────────────────────────────
 CLOUD_ROOT="$HOME/Library/CloudStorage/GoogleDrive-${USER_EMAIL}"
 # Project path with spaces — kept as a variable (quoted everywhere below)
 PROJECT_PATH="${CLOUD_ROOT}/공유 드라이브/in10s Lab/scailout-agent-scoo/scoo-harness"
 
-# ── Step 4: Check Google Drive is mounted ────────────────────────────────────
+# ── Step 8: Check Google Drive is mounted ────────────────────────────────────
 if [ ! -d "$HOME/Library/CloudStorage" ]; then
   echo ""
   warn "Google Drive가 설치되어 있지 않습니다."
@@ -90,7 +159,7 @@ if [ ! -d "$PROJECT_PATH" ]; then
   mkdir -p "$PROJECT_PATH"
 fi
 
-# ── Step 5: Create .tybre project config ─────────────────────────────────────
+# ── Step 9: Create .tybre project config ─────────────────────────────────────
 info "프로젝트 설정 파일 생성 중..."
 
 TYBRE_DIR="${PROJECT_PATH}/.tybre"
@@ -133,7 +202,7 @@ TJSON
 
 success "프로젝트 설정 완료"
 
-# ── Step 6: Register project as last session ─────────────────────────────────
+# ── Step 10: Register project as last session ─────────────────────────────────
 info "Tybre 시작 프로젝트 등록 중..."
 
 TYBRE_APP_DIR="$HOME/Library/Application Support/Tybre"
@@ -151,28 +220,17 @@ LSJSON
 
 success "시작 프로젝트 등록 완료"
 
-# ── Step 7: Install Claude Code ───────────────────────────────────────────────
-info "Claude Code 설치 중..."
-
-if command -v claude &>/dev/null; then
-  CLAUDE_VER=$(claude --version 2>/dev/null | head -1 || echo "unknown")
-  success "Claude Code 이미 설치됨: ${CLAUDE_VER}"
-else
-  # Try npm global install (requires Node.js)
-  if command -v npm &>/dev/null; then
-    npm install -g @anthropic-ai/claude-code 2>/dev/null \
-      && success "Claude Code 설치 완료" \
-      || warn "Claude Code 설치 실패. 수동으로 설치하세요: npm install -g @anthropic-ai/claude-code"
-  else
-    warn "Node.js가 설치되어 있지 않습니다."
-    warn "먼저 Node.js를 설치하세요: https://nodejs.org"
-    warn "그 후: npm install -g @anthropic-ai/claude-code"
-  fi
-fi
-
 # ── Done ──────────────────────────────────────────────────────────────────────
 echo ""
-success "${BOLD}설치 및 설정이 완료되었습니다!${NC}"
+echo "────────────────────────────────────────"
+success "${BOLD}모든 설치 및 설정이 완료되었습니다!${NC}"
+echo ""
+echo "  설치된 항목:"
+echo "    ✓ Homebrew"
+echo "    ✓ Node.js / npm"
+echo "    ✓ PostgreSQL (psql)"
+echo "    ✓ Tybre.md"
+echo "    ✓ Claude Code"
 echo ""
 echo "  프로젝트 경로:"
 echo "    ${PROJECT_PATH}"
@@ -183,4 +241,6 @@ echo "    ✓ Yolo 모드 켜짐"
 echo "    ✓ Continue 모드 켜짐"
 echo ""
 echo "  Tybre.md 를 실행하면 해당 프로젝트가 자동으로 열립니다."
+echo ""
+warn "터미널을 새로 열거나 'source ~/.zprofile' 을 실행해야 PATH 변경사항이 적용됩니다."
 echo ""
