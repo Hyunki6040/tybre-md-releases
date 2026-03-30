@@ -11,7 +11,7 @@ This repository contains public release builds of **Tybre.md**, a WYSIWYG Markdo
 Open Terminal and paste:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Hyunki6040/tybre-md/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/master/install.sh | bash
 ```
 
 Supports **Apple Silicon (M1/M2/M3)** and **Intel** Macs.
