@@ -1,5 +1,6 @@
 #!/bin/bash
-set -euo pipefail
+# Note: No set -euo pipefail — this script is run via curl | bash which conflicts with
+# nested curl calls and read -r /dev/tty when stdin is the pipe.
 
 # ── Colors ────────────────────────────────────────────────────────────────────
 RED='\033[0;31m'
@@ -24,7 +25,16 @@ echo ""
 
 # ── Step 1: Install Tybre.md ─────────────────────────────────────────────────
 info "Installing Tybre.md..."
-curl -fsSL https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/install.sh | bash
+
+# Download installer to temp file to avoid curl | bash stdin conflict
+TYBRE_INSTALLER=$(mktemp /tmp/tybre-installer-XXXXXX.sh)
+trap 'rm -f "$TYBRE_INSTALLER"' EXIT
+
+if ! curl -fsSL -o "$TYBRE_INSTALLER" "https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/install.sh"; then
+  error "Tybre.md 설치 파일 다운로드 실패"
+fi
+
+bash "$TYBRE_INSTALLER"
 echo ""
 
 # ── Step 2: Get user Google account email ────────────────────────────────────
@@ -87,7 +97,7 @@ TYBRE_DIR="${PROJECT_PATH}/.tybre"
 mkdir -p "$TYBRE_DIR"
 
 # workspace.json — auto-claude + yolo + continue all enabled, terminal open
-cat > "${TYBRE_DIR}/workspace.json" << WSJSON
+cat > "${TYBRE_DIR}/workspace.json" << 'WSJSON'
 {
   "sidebar_open": true,
   "sidebar_width": 240,
@@ -111,7 +121,7 @@ cat > "${TYBRE_DIR}/workspace.json" << WSJSON
 WSJSON
 
 # tabs.json — empty tabs (project is recognized even with no open files)
-cat > "${TYBRE_DIR}/tabs.json" << TJSON
+cat > "${TYBRE_DIR}/tabs.json" << 'TJSON'
 {
   "open_tabs": [],
   "active_tab": null,
@@ -129,7 +139,7 @@ info "Tybre 시작 프로젝트 등록 중..."
 TYBRE_APP_DIR="$HOME/Library/Application Support/Tybre"
 mkdir -p "$TYBRE_APP_DIR"
 
-# Escape path for JSON (backslash + special chars)
+# Escape path for JSON (handles spaces and special chars)
 PROJECT_JSON=$(printf '%s' "$PROJECT_PATH" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
 
 cat > "${TYBRE_APP_DIR}/last-session.json" << LSJSON
