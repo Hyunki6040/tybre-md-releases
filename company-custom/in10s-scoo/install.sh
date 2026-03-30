@@ -36,11 +36,12 @@ else
   # Add brew to PATH for Apple Silicon and Intel
   if [ -f "/opt/homebrew/bin/brew" ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
-    # Persist to shell profile
-    SHELL_PROFILE="$HOME/.zprofile"
-    grep -q 'homebrew' "$SHELL_PROFILE" 2>/dev/null || echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "$SHELL_PROFILE"
+    grep -q 'homebrew' "$HOME/.zprofile" 2>/dev/null || echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "$HOME/.zprofile"
+    grep -q 'homebrew' "$HOME/.zshrc" 2>/dev/null || echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "$HOME/.zshrc"
   elif [ -f "/usr/local/bin/brew" ]; then
     eval "$(/usr/local/bin/brew shellenv)"
+    grep -q 'homebrew' "$HOME/.zprofile" 2>/dev/null || echo 'eval "$(/usr/local/bin/brew shellenv)"' >> "$HOME/.zprofile"
+    grep -q 'homebrew' "$HOME/.zshrc" 2>/dev/null || echo 'eval "$(/usr/local/bin/brew shellenv)"' >> "$HOME/.zshrc"
   fi
   success "Homebrew 설치 완료"
 fi
@@ -72,9 +73,9 @@ else
   # Also add to PATH in case link doesn't cover current session
   PG_BIN="$(brew --prefix postgresql@16)/bin"
   export PATH="$PG_BIN:$PATH"
-  SHELL_PROFILE="$HOME/.zprofile"
-  grep -q 'postgresql' "$SHELL_PROFILE" 2>/dev/null || echo "export PATH=\"${PG_BIN}:\$PATH\"" >> "$SHELL_PROFILE"
-  success "PostgreSQL 설치 완료: $(psql --version 2>/dev/null || echo 'psql (재시작 후 사용 가능)')"
+  grep -q 'postgresql' "$HOME/.zprofile" 2>/dev/null || echo "export PATH=\"${PG_BIN}:\$PATH\"" >> "$HOME/.zprofile"
+  grep -q 'postgresql' "$HOME/.zshrc"   2>/dev/null || echo "export PATH=\"${PG_BIN}:\$PATH\"" >> "$HOME/.zshrc"
+  success "PostgreSQL 설치 완료: $(psql --version 2>/dev/null || echo 'ok')"
 fi
 echo ""
 
@@ -242,5 +243,8 @@ echo "    ✓ Continue 모드 켜짐"
 echo ""
 echo "  Tybre.md 를 실행하면 해당 프로젝트가 자동으로 열립니다."
 echo ""
-warn "터미널을 새로 열거나 'source ~/.zprofile' 을 실행해야 PATH 변경사항이 적용됩니다."
-echo ""
+
+# Apply PATH changes to the current shell session
+# shellcheck disable=SC1090
+source "$HOME/.zprofile" 2>/dev/null || true
+source "$HOME/.zshrc"   2>/dev/null || true
