@@ -107,56 +107,64 @@ else
 fi
 echo ""
 
-# ── Step 6: Get user Google account email ────────────────────────────────────
-printf "${BOLD}Google 계정 이메일을 입력하세요${NC} (예: you@company.com): "
-read -r USER_EMAIL </dev/tty
+# ── Step 6: Auto-detect Google Drive account ─────────────────────────────────
+info "Google Drive 계정 감지 중..."
 
-if [ -z "$USER_EMAIL" ]; then
-  warn "이메일을 입력하지 않았습니다. 프로젝트 자동 설정을 건너뜁니다."
-  success "기본 설치 완료!"
-  exit 0
-fi
+CLOUD_BASE="$HOME/Library/CloudStorage"
+CLOUD_ROOT=""
 
-# ── Step 7: Build paths ───────────────────────────────────────────────────────
-CLOUD_ROOT="$HOME/Library/CloudStorage/GoogleDrive-${USER_EMAIL}"
-# Project path with spaces — kept as a variable (quoted everywhere below)
-PROJECT_PATH="${CLOUD_ROOT}/공유 드라이브/in10s Lab/scailout-agent-scoo/scoo-harness"
-
-# ── Step 8: Check Google Drive is mounted ────────────────────────────────────
-if [ ! -d "$HOME/Library/CloudStorage" ]; then
+if [ ! -d "$CLOUD_BASE" ]; then
   echo ""
   warn "Google Drive가 설치되어 있지 않습니다."
-  warn ""
-  warn "아래 링크에서 Google Drive for Desktop을 설치하세요:"
-  warn "  ${BLUE}https://support.google.com/a/users/answer/13022292?hl=ko${NC}"
-  warn ""
+  warn "아래 링크에서 설치하세요: ${BLUE}https://support.google.com/a/users/answer/13022292?hl=ko${NC}"
   warn "설치 후 이 스크립트를 다시 실행하세요."
   echo ""
   exit 0
 fi
 
-if [ ! -d "$CLOUD_ROOT" ]; then
+# Collect all GoogleDrive-* directories
+GD_DIRS=()
+while IFS= read -r -d '' d; do
+  GD_DIRS+=("$d")
+done < <(find "$CLOUD_BASE" -maxdepth 1 -type d -name 'GoogleDrive-*' -print0 2>/dev/null)
+
+if [ ${#GD_DIRS[@]} -eq 0 ]; then
   echo ""
-  warn "Google Drive 계정 디렉토리를 찾을 수 없습니다:"
-  warn "  ${CLOUD_ROOT}"
-  warn ""
-  warn "확인 사항:"
-  warn "  1. Google Drive for Desktop이 로그인되어 있는지 확인하세요"
-  warn "  2. 이메일 주소가 정확한지 확인하세요: ${USER_EMAIL}"
-  warn "  3. Google Drive 설치 가이드: ${BLUE}https://support.google.com/a/users/answer/13022292?hl=ko${NC}"
+  warn "Google Drive 계정을 찾을 수 없습니다."
+  warn "Google Drive for Desktop에 로그인 후 다시 실행하세요."
   echo ""
   exit 0
+elif [ ${#GD_DIRS[@]} -eq 1 ]; then
+  CLOUD_ROOT="${GD_DIRS[0]}"
+  USER_EMAIL=$(basename "$CLOUD_ROOT" | sed 's/^GoogleDrive-//')
+  success "Google Drive 계정 감지: ${USER_EMAIL}"
+else
+  # Multiple accounts — show numbered list and let user pick
+  echo ""
+  echo -e "  ${BOLD}Google Drive 계정이 여러 개 감지되었습니다:${NC}"
+  for i in "${!GD_DIRS[@]}"; do
+    echo "    $((i+1)). $(basename "${GD_DIRS[$i]}" | sed 's/^GoogleDrive-//')"
+  done
+  printf "  선택 (1-${#GD_DIRS[@]}): "
+  read -r CHOICE </dev/tty
+  IDX=$((CHOICE - 1))
+  if [ "$IDX" -lt 0 ] || [ "$IDX" -ge ${#GD_DIRS[@]} ]; then
+    warn "잘못된 선택입니다. 설치를 종료합니다."
+    exit 0
+  fi
+  CLOUD_ROOT="${GD_DIRS[$IDX]}"
+  USER_EMAIL=$(basename "$CLOUD_ROOT" | sed 's/^GoogleDrive-//')
+  success "선택된 계정: ${USER_EMAIL}"
 fi
+
+# ── Step 7: Build project path ────────────────────────────────────────────────
+PROJECT_PATH="${CLOUD_ROOT}/공유 드라이브/in10s Lab/scailout-agent-scoo/scoo-harness"
 
 if [ ! -d "$PROJECT_PATH" ]; then
   echo ""
   warn "프로젝트 디렉토리를 찾을 수 없습니다:"
   warn "  ${PROJECT_PATH}"
-  warn ""
-  warn "Google Drive 동기화가 완료되었는지 확인하세요."
-  echo ""
-  # Still continue — set up config so it loads once synced
-  warn "프로젝트가 동기화되면 자동으로 열리도록 설정을 진행합니다..."
+  warn "Google Drive 동기화가 완료되면 자동으로 열리도록 설정을 진행합니다..."
   mkdir -p "$PROJECT_PATH"
 fi
 
