@@ -54,7 +54,7 @@ DOWNLOAD_URL=$(echo "$RELEASE_JSON" | grep '"browser_download_url"' | grep "$ASS
 info "Downloading ${APP_NAME} ${VERSION}..."
 
 # ── Download ──────────────────────────────────────────────────────────────────
-TMP_DMG=$(mktemp /tmp/tybre-XXXXXX.dmg)
+TMP_DMG="/tmp/tybre-$$.dmg"
 trap 'rm -f "$TMP_DMG"' EXIT
 
 curl -fsSL --progress-bar "$DOWNLOAD_URL" -o "$TMP_DMG" \
