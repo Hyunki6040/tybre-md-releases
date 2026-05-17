@@ -87,8 +87,11 @@ cp -R "$APP_SRC" "$APP_DEST" \
 info "Removing macOS security quarantine..."
 xattr -cr "$APP_DEST" 2>/dev/null || true
 
-# ── Cleanup (trap handles this, but let's be explicit) ────────────────────────
+# ── Cleanup ───────────────────────────────────────────────────────────────────
 hdiutil detach "$MOUNT_POINT" -quiet 2>/dev/null || true
+trap - EXIT
+rm -f "$TMP_DMG"
+rm -rf "$MOUNT_POINT"
 
 # ── Done ──────────────────────────────────────────────────────────────────────
 echo ""
