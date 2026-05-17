@@ -54,7 +54,7 @@ DOWNLOAD_URL=$(echo "$RELEASE_JSON" | grep '"browser_download_url"' | grep "$ASS
 info "Downloading ${APP_NAME} ${VERSION}..."
 
 # ── Download ──────────────────────────────────────────────────────────────────
-TMP_DMG="/tmp/tybre-$$.dmg"
+TMP_DMG=$(mktemp /tmp/tybre-XXXXXX.dmg)
 trap 'rm -f "$TMP_DMG"' EXIT
 
 curl -fsSL --progress-bar "$DOWNLOAD_URL" -o "$TMP_DMG" \
@@ -87,11 +87,8 @@ cp -R "$APP_SRC" "$APP_DEST" \
 info "Removing macOS security quarantine..."
 xattr -cr "$APP_DEST" 2>/dev/null || true
 
-# ── Cleanup ───────────────────────────────────────────────────────────────────
+# ── Cleanup (trap handles this, but let's be explicit) ────────────────────────
 hdiutil detach "$MOUNT_POINT" -quiet 2>/dev/null || true
-trap - EXIT
-rm -f "$TMP_DMG"
-rm -rf "$MOUNT_POINT"
 
 # ── Done ──────────────────────────────────────────────────────────────────────
 echo ""
