@@ -11,12 +11,30 @@ This repository contains public release builds of **Tybre.md**, a WYSIWYG Markdo
 Open Terminal and paste:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/install.sh | bash
 ```
 
 Supports **Apple Silicon (M1/M2/M3)** and **Intel** Macs.
 
 After installation, search for "Tybre" in Spotlight (⌘ Space).
+
+---
+
+## Install (Windows)
+
+**PowerShell:**
+
+```powershell
+irm https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/install.ps1 | iex
+```
+
+**Command Prompt (CMD):**
+
+```batch
+curl -fsSL https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/install.cmd -o install.cmd && install.cmd && del install.cmd
+```
+
+Installs the x64 build to `%LOCALAPPDATA%\Programs` (no admin required). After installation, search for "Tybre" in the Start Menu.
 
 ---
 
