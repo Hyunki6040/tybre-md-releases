@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/icon.png" width="96" height="96" alt="Tybre.md" />
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/icon.png" width="96" height="96" alt="Tybre.md" />
 
 # Tybre.md
 
@@ -18,7 +18,7 @@ Deja de perder el ritmo con Alt-Tab. Todo en **5MB**.
 
 <br />
 
-<img src="./assets/hero-es.jpeg" alt="Tybre.md — Escribe, ejecuta y mira. Una ventana." width="820" />
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/hero-es.jpeg" alt="Tybre.md — Escribe, ejecuta y mira. Una ventana." width="820" />
 
 </div>
 
@@ -58,7 +58,7 @@ Tybre.md reúne todo eso en **una sola ventana** que recuerda cada cosa.
 ## 📸 Captura
 
 <div align="center">
-<img src="./assets/screenshot.png" alt="Editor Tybre.md — WYSIWYG con sintaxis revelada" width="760" />
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/screenshot.png" alt="Editor Tybre.md — WYSIWYG con sintaxis revelada" width="760" />
 <br />
 <sub>WYSIWYG con sintaxis revelada — pasa el cursor para mostrar el markup <code>##</code>, con conteo de palabras y caracteres en vivo.</sub>
 </div>

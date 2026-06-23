@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/icon.png" width="96" height="96" alt="Tybre.md" />
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/icon.png" width="96" height="96" alt="Tybre.md" />
 
 # Tybre.md
 
@@ -18,7 +18,7 @@
 
 <br />
 
-<img src="./assets/hero-ko.jpeg" alt="Tybre.md — 쓰고, 실행하고, 확인하는 단 하나의 창" width="820" />
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/hero-ko.jpeg" alt="Tybre.md — 쓰고, 실행하고, 확인하는 단 하나의 창" width="820" />
 
 </div>
 
@@ -58,7 +58,7 @@ Tybre.md는 이 모든 걸 **자리와 상태를 전부 기억하는 단 하나�
 ## 📸 스크린샷
 
 <div align="center">
-<img src="./assets/screenshot.png" alt="Tybre.md 에디터 — 문법 표시 위지윅" width="760" />
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/screenshot.png" alt="Tybre.md 에디터 — 문법 표시 위지윅" width="760" />
 <br />
 <sub>커서를 올리면 <code>##</code> 문법이 드러나는 위지윅, 그리고 실시간 단어·글자 수.</sub>
 </div>

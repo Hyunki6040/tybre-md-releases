@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/icon.png" width="96" height="96" alt="Tybre.md" />
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/icon.png" width="96" height="96" alt="Tybre.md" />
 
 # Tybre.md
 
@@ -18,7 +18,7 @@ Stop Alt-Tabbing your flow away. All in **5MB**.
 
 <br />
 
-<img src="./assets/hero-en.jpeg" alt="Tybre.md — Write. Run. See. One window." width="820" />
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/hero-en.jpeg" alt="Tybre.md — Write. Run. See. One window." width="820" />
 
 </div>
 
@@ -58,7 +58,7 @@ Tybre.md collapses all of that into **a single window** that remembers everythin
 ## 📸 Screenshot
 
 <div align="center">
-<img src="./assets/screenshot.png" alt="Tybre.md editor — syntax-reveal WYSIWYG" width="760" />
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/screenshot.png" alt="Tybre.md editor — syntax-reveal WYSIWYG" width="760" />
 <br />
 <sub>Syntax-reveal WYSIWYG — hover a line to expose the <code>##</code> markup, with a live word & character count.</sub>
 </div>

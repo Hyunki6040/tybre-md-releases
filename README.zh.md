@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/icon.png" width="96" height="96" alt="Tybre.md" />
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/icon.png" width="96" height="96" alt="Tybre.md" />
 
 # Tybre.md
 
@@ -18,7 +18,7 @@ Markdown 编辑器、**真实终端**、**浏览器** — 融合进一个原生�
 
 <br />
 
-<img src="./assets/hero-zh.jpeg" alt="Tybre.md — 写作、运行、预览，一个窗口搞定" width="820" />
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/hero-zh.jpeg" alt="Tybre.md — 写作、运行、预览，一个窗口搞定" width="820" />
 
 </div>
 
@@ -58,7 +58,7 @@ Tybre.md 把这一切收进 **一个能记住所有状态的窗口**。
 ## 📸 截图
 
 <div align="center">
-<img src="./assets/screenshot.png" alt="Tybre.md 编辑器 —— 语法浮现式所见即所得" width="760" />
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/screenshot.png" alt="Tybre.md 编辑器 —— 语法浮现式所见即所得" width="760" />
 <br />
 <sub>语法浮现式 WYSIWYG —— 悬停一行即显 <code>##</code> 标记，并实时统计字数与字符数。</sub>
 </div>
