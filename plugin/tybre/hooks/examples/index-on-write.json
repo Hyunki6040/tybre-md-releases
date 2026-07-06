@@ -1,0 +1,16 @@
+{
+  "//": "Copy-pasteable Claude Code hook (CLI-104): after Claude writes/edits a file, warm the Tybre search index for the project's markdown. Drop this into your project .claude/settings.json (merge into an existing 'hooks' block). $CLAUDE_PROJECT_DIR is set by Claude Code. See ../EVENTS.md for the event contract this stands in for (file-save).",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "tybre search \"\" --path-glob \"**/*.md\" --project \"$CLAUDE_PROJECT_DIR\" --json > /dev/null 2>&1 || true"
+          }
+        ]
+      }
+    ]
+  }
+}

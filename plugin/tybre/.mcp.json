@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "tybre": {
+      "type": "stdio",
+      "command": "tybre",
+      "args": ["mcp", "serve"]
+    }
+  }
+}

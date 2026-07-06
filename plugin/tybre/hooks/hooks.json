@@ -1,0 +1,34 @@
+{
+  "//": "No hooks are active by default. The event contract these stand in for is documented in EVENTS.md (file-save / file-open / tab-change / graph-activity). To enable an example, move its block from '//examples' into 'hooks' and drop the '//' key. ${CLAUDE_PLUGIN_ROOT} points at this plugin directory; $CLAUDE_PROJECT_DIR is set by Claude Code. Ready-to-copy variants live in ./examples/.",
+  "//examples": {
+    "post_write_index": {
+      "//": "file-save analogue: after Claude writes/edits, warm Tybre's search index for the project. Structured filter (--path-glob) keeps it to markdown.",
+      "PostToolUse": [
+        {
+          "matcher": "Write|Edit",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "tybre search \"\" --path-glob \"**/*.md\" --project \"$CLAUDE_PROJECT_DIR\" --json > /dev/null 2>&1 || true"
+            }
+          ]
+        }
+      ]
+    },
+    "post_bash_notify_graph": {
+      "//": "graph-activity analogue (XC-105/106 · TD-XA): after a Bash tool call whose command mentions `tybre ` or a `tybre://` link, publish a graph-activity event so the graph fires a neural particle. The Bash tool's JSON payload arrives on stdin; grep it for the marker and only then notify. Headless (app closed) is a silent no-op — `tybre notify-event` always exits 0, so it never fails the Bash call. The graph resolves --path to the acting project's uuid when --project is omitted.",
+      "PostToolUse": [
+        {
+          "matcher": "Bash",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "grep -qE 'tybre |tybre://' && tybre notify-event cli_command --path \"$CLAUDE_PROJECT_DIR\" --json > /dev/null 2>&1; true"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "hooks": {}
+}

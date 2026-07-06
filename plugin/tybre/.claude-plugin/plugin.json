@@ -1,0 +1,18 @@
+{
+  "name": "tybre",
+  "version": "0.1.52",
+  "description": "Control the Tybre.md note vault from Claude Code: open, search, create, and print notes; cross-project crosslinks; MCP server for read/write access to markdown files.",
+  "author": {
+    "name": "Tybre.md",
+    "email": "support@tybre.md"
+  },
+  "homepage": "https://github.com/Hyunki6040/tybre-md-releases",
+  "repository": "https://github.com/Hyunki6040/tybre-md-releases",
+  "license": "SEE LICENSE IN LICENSE",
+  "keywords": [
+    "markdown",
+    "notes",
+    "obsidian-alternative",
+    "graph"
+  ]
+}
