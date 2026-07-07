@@ -1,6 +1,6 @@
 {
   "name": "tybre",
-  "version": "0.1.52",
+  "version": "0.1.53",
   "description": "Control the Tybre.md note vault from Claude Code: open, search, create, and print notes; cross-project crosslinks; MCP server for read/write access to markdown files.",
   "author": {
     "name": "Tybre.md",
