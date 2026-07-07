@@ -88,7 +88,7 @@ Tybre.md collapses all of that into **a single window** that remembers everythin
 Open **Terminal** and paste:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/install.sh | bash
+curl -fsSL https://tybre.md/install.sh | bash
 ```
 
 Supports **Apple Silicon (M1/M2/M3)** and **Intel**. After installing, search for "Tybre" in Spotlight (⌘ Space).
@@ -98,13 +98,13 @@ Supports **Apple Silicon (M1/M2/M3)** and **Intel**. After installing, search fo
 **PowerShell:**
 
 ```powershell
-irm https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/install.ps1 | iex
+irm https://tybre.md/install.ps1 | iex
 ```
 
 **Command Prompt (CMD):**
 
 ```batch
-curl -fsSL https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/install.cmd -o install.cmd && install.cmd && del install.cmd
+curl -fsSL https://tybre.md/install.cmd -o install.cmd && install.cmd && del install.cmd
 ```
 
 Installs the x64 build to `%LOCALAPPDATA%\Programs` (no admin required). After installing, search for "Tybre" in the Start Menu.
