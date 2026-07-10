@@ -30,5 +30,57 @@
       ]
     }
   },
-  "hooks": {}
+  "//agent-status": "PRD 04 F1: report Claude's lifecycle state to the running Tybre app so the terminal dot / mascot track it deterministically instead of guessing from output volume. Default-ON is safe: `tybre agent-status` is a silent no-op (exit 0) when the app is closed. UserPromptSubmit/PreToolUse/PostToolUse → working; Notification (permission/question prompt) → waiting; Stop → done.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "tybre agent-status working --path \"$CLAUDE_PROJECT_DIR\" > /dev/null 2>&1; true"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "tybre agent-status working --path \"$CLAUDE_PROJECT_DIR\" > /dev/null 2>&1; true"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "tybre agent-status working --path \"$CLAUDE_PROJECT_DIR\" > /dev/null 2>&1; true"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "tybre agent-status waiting --path \"$CLAUDE_PROJECT_DIR\" > /dev/null 2>&1; true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "tybre agent-status done --path \"$CLAUDE_PROJECT_DIR\" > /dev/null 2>&1; true"
+          }
+        ]
+      }
+    ]
+  }
 }

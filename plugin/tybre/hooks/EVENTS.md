@@ -26,6 +26,7 @@ Each event flows **app → consumer** (Tybre emits, a hook consumes). Stability:
 | `file-open`      | stable    | Tauri `open-files`        | `string[]` (absolute paths) |
 | `tab-change`     | reserved  | (no app event yet)        | `{ "path": string, "tabId": string }` |
 | `graph-activity` | stable    | Tauri `tybre://graph-activity` (emitted by `tybre notify-event` over IPC) | `{ kind, project_uuid, target_uuid?, path?, ts }` |
+| `agent-status`   | stable    | Tauri `tybre://agent-status` (emitted by `tybre agent-status` over IPC) | `{ state, path?, ts }` |
 
 The **Raw payload** column is exactly what the backing Tauri event carries today
 (`watcher.rs` emits `file-changed` as a bare string; `lib.rs`/`ipc.rs` emit
@@ -51,6 +52,16 @@ object wrapper.
   Publishing goes through the **existing IPC socket** (the same path as
   `tybre open` / `tybre chat`) — no new network transport (TD-CL / TD-XA). When
   the app is closed, `tybre notify-event` is a silent no-op (exit 0).
+- **`agent-status`** (PRD 04 F1) — fires when `tybre agent-status <state>`
+  reaches the running app over IPC. It upgrades the terminal dot / mascot from
+  the output-volume heuristic to a **deterministic** signal: the Claude Code
+  lifecycle hooks in [`hooks.json`](./hooks.json) report `working`
+  (UserPromptSubmit/PreToolUse/PostToolUse), `waiting` (Notification — a
+  permission/question prompt), and `done` (Stop). `state` is whitelisted
+  (`working` | `waiting` | `done`); any other value is dropped. `path` is the
+  agent's project dir (`$CLAUDE_PROJECT_DIR`). Like `graph-activity` it is
+  **published by a CLI/hook** over the **existing IPC socket** — no new
+  transport — and is a silent no-op (exit 0) when the app is closed.
 
 ## How to consume
 
@@ -79,6 +90,13 @@ above is the stable target either way.
   "project_uuid": "…",     // acting project uuid ("" when only a path is known)
   "target_uuid": null,     // crosslink target uuid, or null
   "path": "/abs/project",  // path hint (project dir or file), or null
+  "ts": 1751600000000      // epoch millis, app-stamped
+}
+
+// agent-status — deterministic agent lifecycle state (PRD 04 F1)
+{
+  "state": "done",         // "working" | "waiting" | "done"
+  "path": "/abs/project",  // agent project dir ($CLAUDE_PROJECT_DIR), or null
   "ts": 1751600000000      // epoch millis, app-stamped
 }
 ```
