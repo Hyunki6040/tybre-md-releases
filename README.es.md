@@ -20,6 +20,10 @@ Deja de perder el ritmo con Alt-Tab. Todo en **5MB**.
 
 <img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/hero-es.jpeg" alt="Tybre.md — Escribe, ejecuta y mira. Una ventana." width="820" />
 
+<br />
+
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/editor-demo.gif" alt="Edición WYSIWYG con sintaxis revelada" width="410" /> <img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/graph-demo.gif" alt="Grafo de conocimiento con inercia" width="410" />
+
 </div>
 
 ---
