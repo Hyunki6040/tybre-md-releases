@@ -20,6 +20,10 @@
 
 <img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/hero-ko.jpeg" alt="Tybre.md — 쓰고, 실행하고, 확인하는 단 하나의 창" width="820" />
 
+<br />
+
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/editor-demo.gif" alt="위지윅 문법 표시 편집" width="410" /> <img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/graph-demo.gif" alt="관성 스크롤 지식 그래프" width="410" />
+
 </div>
 
 ---
