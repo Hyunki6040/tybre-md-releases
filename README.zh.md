@@ -20,6 +20,10 @@ Markdown 编辑器、**真实终端**、**浏览器** — 融合进一个原生�
 
 <img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/hero-zh.jpeg" alt="Tybre.md — 写作、运行、预览，一个窗口搞定" width="820" />
 
+<br />
+
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/editor-demo.gif" alt="所见即所得语法显现编辑" width="410" /> <img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/graph-demo.gif" alt="带惯性的知识图谱" width="410" />
+
 </div>
 
 ---
