@@ -20,6 +20,10 @@ Stop Alt-Tabbing your flow away. All in **5MB**.
 
 <img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/hero-en.jpeg" alt="Tybre.md — Write. Run. See. One window." width="820" />
 
+<br />
+
+<img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/editor-demo.gif" alt="WYSIWYG syntax-reveal editing" width="410" /> <img src="https://raw.githubusercontent.com/Hyunki6040/tybre-md-releases/main/assets/graph-demo.gif" alt="Knowledge graph with momentum" width="410" />
+
 </div>
 
 ---
