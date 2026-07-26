@@ -43,12 +43,29 @@ function Install-Tybre {
         }
 
         # Prefer the x64 NSIS installer (silent, per-user, no admin required)
-        $asset = $release.assets | Where-Object { $_.name -like '*x64-setup.exe' } | Select-Object -First 1
+        function Find-WinAsset($rel) {
+            $a = $rel.assets | Where-Object { $_.name -like '*x64-setup.exe' } | Select-Object -First 1
+            if (-not $a) { $a = $rel.assets | Where-Object { $_.name -like '*-setup.exe' } | Select-Object -First 1 }
+            return $a
+        }
+        $asset = Find-WinAsset $release
+
+        # macOS-only releases can lead the Windows builds; fall back to the most
+        # recent release that actually ships a Windows installer.
         if (-not $asset) {
-            $asset = $release.assets | Where-Object { $_.name -like '*-setup.exe' } | Select-Object -First 1
+            Write-Host "==> $version has no Windows build yet; looking for the newest one..." -ForegroundColor Blue
+            try {
+                $releases = Invoke-RestMethod `
+                    -Uri "https://api.github.com/repos/$repo/releases?per_page=30" `
+                    -Headers @{ 'User-Agent' = 'tybre-installer' }
+            } catch { $releases = @() }
+            foreach ($rel in $releases) {
+                $a = Find-WinAsset $rel
+                if ($a) { $release = $rel; $version = $rel.tag_name; $asset = $a; break }
+            }
         }
         if (-not $asset) {
-            Write-Host '[X] Could not find a Windows installer (-setup.exe) in the latest release.' -ForegroundColor Red
+            Write-Host '[X] Could not find a Windows installer (-setup.exe) in any recent release.' -ForegroundColor Red
             return
         }
 
