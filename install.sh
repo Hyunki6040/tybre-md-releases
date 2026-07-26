@@ -48,7 +48,17 @@ RELEASE_JSON=$(curl -fsSL "https://api.github.com/repos/${REPO}/releases/latest"
 VERSION=$(echo "$RELEASE_JSON" | grep '"tag_name"' | head -1 | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
 DOWNLOAD_URL=$(echo "$RELEASE_JSON" | grep '"browser_download_url"' | grep "$ASSET_SUFFIX" | head -1 | sed 's/.*"browser_download_url": *"\([^"]*\)".*/\1/')
 
-[ -z "$VERSION" ]      && error "Could not determine version from GitHub API."
+[ -z "$VERSION" ] && error "Could not determine version from GitHub API."
+
+# The latest release may not carry this platform's asset (platform builds can
+# lag). Fall back to the newest release that does — the list is newest-first.
+if [ -z "$DOWNLOAD_URL" ]; then
+  info "${VERSION} has no ${ASSET_SUFFIX} yet; looking for the newest release that has one..."
+  RELEASES_JSON=$(curl -fsSL "https://api.github.com/repos/${REPO}/releases?per_page=30" 2>/dev/null) || true
+  DOWNLOAD_URL=$(echo "$RELEASES_JSON" | grep '"browser_download_url"' | grep "$ASSET_SUFFIX" | head -1 | sed 's/.*"browser_download_url": *"\([^"]*\)".*/\1/')
+  [ -n "$DOWNLOAD_URL" ] && VERSION=$(echo "$DOWNLOAD_URL" | sed 's#.*/download/\([^/]*\)/.*#\1#')
+fi
+
 [ -z "$DOWNLOAD_URL" ] && error "Could not find .dmg download URL for $ARCH_LABEL."
 
 info "Downloading ${APP_NAME} ${VERSION}..."
