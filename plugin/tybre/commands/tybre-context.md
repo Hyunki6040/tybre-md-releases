@@ -1,16 +1,18 @@
 ---
-description: Mandatory rules for handling [[tybre://…]] references passed from the Tybre.md graph — resolve and read them with the tybre CLI/MCP, never guess paths
-argument-hint: "[tybre:// references + your request]"
+description: Mandatory rules for handling references injected by Tybre.md — [[tybre://…]] notes picked in the graph and [design:…] elements picked in the HTML preview. Resolve with the tybre CLI/MCP, never guess paths.
+argument-hint: "[tybre:// refs and/or [design:…] tokens + your request]"
 disable-model-invocation: true
 ---
 
 # /tybre-context
 
-`$ARGUMENTS` is the user's request, usually prefixed with one or more
-`[[tybre://<uuid>/<relpath>]]` note references picked in the Tybre.md graph
-view. Treat the references as the context set for the request and follow
-these rules for EVERY `tybre://` reference — they are cross-vault links, so
-the file is often NOT under the current working directory:
+`$ARGUMENTS` is the user's request, usually prefixed with references the
+user picked inside Tybre.md: `[[tybre://<uuid>/<relpath>]]` notes from the
+graph view, and/or `[design:"file" sel:"css path" …]` elements from the HTML
+preview. Treat every reference as the context set for the request.
+
+For `tybre://` references, follow these rules — they are cross-vault links,
+so the file is often NOT under the current working directory:
 
 1. **Never guess a filesystem path** from `<uuid>/<relpath>`. The uuid names
    another vault whose location on disk you don't know.
@@ -34,7 +36,20 @@ the file is often NOT under the current working directory:
 5. A `pending`/`broken` status is not a dead end: `tybre index heal <uuid>`
    re-scans that vault, then re-resolve before reporting a link as broken.
 
-After gathering the referenced notes, carry out the rest of `$ARGUMENTS` as
-the user's actual request, citing the notes you read.
+For `[design:…]` tokens (HTML-preview element selections), the full grammar
+and procedure live in the `tybre-design-select` skill
+(`skills/design-select/SKILL.md`) — read it before acting. The essentials:
+
+1. `design:"…"` names a project-relative HTML file; `sel:"…"` is a CSS path
+   rooted at `<body>` that identified the clicked element (`:nth-of-type`
+   counts same-tag siblings only). `text:"…"` is a 60-char excerpt for
+   re-anchoring if the file changed since the click.
+2. Read the file, locate exactly that element, and apply the user's request
+   to it (or answer, if it's a question). Preserve unrelated markup.
+3. Anything named `__tybre_*` / `data-tybre-*` is a preview-only artifact —
+   it does not exist in the file; never add or "fix" it.
+
+After gathering the referenced notes/elements, carry out the rest of
+`$ARGUMENTS` as the user's actual request, citing what you read.
 
 Full CLI/MCP surface: `skills/tybre/SKILL.md` · `/tybre-help cli`.

@@ -77,11 +77,17 @@ automatically if it's open.
 
 `tybre mcp serve [--project <dir>]` runs a local, STDIO MCP server exposing
 `list_files`, `read_file`, `write_file` (including surgical heading/frontmatter
-patches), `search`, and `open_in_app` tools. This plugin's `.mcp.json` registers
-it — prefer the MCP tools over shelling out to `tybre` when they're available,
-since they give structured results and heading-level edits. Fall back to the CLI
-commands above for anything the MCP tools don't cover (e.g. `open`, `daily`,
-project listing).
+patches), `search`, `open_in_app`, `open_folder`, and `open_remote_folder`
+tools. This plugin's `.mcp.json` registers it — prefer the MCP tools over
+shelling out to `tybre` when they're available, since they give structured
+results and heading-level edits. Fall back to the CLI commands above for
+anything the MCP tools don't cover (e.g. `open`, `daily`, project listing).
+
+`open_folder` opens/switches the running app to a directory as a project
+("폴더 열기") — absolute path for any project, vault-relative for a
+subdirectory. `open_remote_folder` shows the app's remote-folder (SFTP)
+connect dialog ("원격 폴더 열기"); the user fills in host/credentials there —
+never pass credentials through the agent.
 
 The `search` tool accepts the same structured filters as the CLI: `path_glob`,
 `frontmatter` (an object of key→value equality), `modified_after`,
