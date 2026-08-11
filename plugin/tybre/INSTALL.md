@@ -63,11 +63,39 @@ rather skip the plugin marketplace entirely.
 
 ### Updating
 
-The plugin currently ships without a pinned `version` (it's under active
-development) — `/plugin marketplace update` always pulls the latest
-`plugin/tybre/` synced from the newest tagged app release. There is no
-version pinning/rollback yet; that lands once the skill/hook/command surface
-stabilizes.
+An install records the plugin version it fetched, and that record does **not**
+follow later releases on its own. Refreshing the marketplace alone is not
+enough: the marketplace cache and your installed copy are two separate things,
+so a stale install keeps serving the command/skill files it was installed with
+even after newer ones exist on disk. Observed drift: an install pinned at
+`0.1.52` while the marketplace source had moved to `0.1.69`, which surfaced as
+`/tybre-context` behaving like an older build.
+
+Update both, in this order:
+
+```
+claude plugin marketplace update tybre-md-releases
+claude plugin update tybre@tybre-md-releases
+```
+
+Then **restart Claude Code** — the CLI says so explicitly, and the newly
+installed command/skill files are not picked up until you do.
+
+Verify the recorded version afterwards:
+
+```
+claude plugin list        # look for tybre@tybre-md-releases
+```
+
+If it still reports the old version, reinstall:
+
+```
+claude plugin uninstall tybre@tybre-md-releases
+claude plugin install tybre@tybre-md-releases
+```
+
+There is no version pinning/rollback UI yet; that lands once the
+skill/hook/command surface stabilizes.
 
 ### Uninstall
 
