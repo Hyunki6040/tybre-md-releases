@@ -82,8 +82,33 @@ Every command accepts `--json`:
     - `--str`: Strength 0.0–1.0
     - `--relevance`: Relevance 0.0–1.0
     - `--why`: Free-text reason
+- **`tybre agent`** — Manage AI teammates: list, hire, fire, and talk to them
+  - `tybre agent list [--project] [--all]` — List teammates available here (project ones shadow global ones by name)
+    - `--all`: Include global teammates hidden by a same-named project teammate
+  - `tybre agent hire <name> [--preset] [--persona] [--runtime] [--project-only] [--project]` — Hire a teammate from a role preset, or from a persona file
+    - `name`: Mention name (no spaces, 1-24 chars) — how you call them with `@`
+    - `--preset`: Role preset: summarizer | writer | reviewer | planner | researcher | minutes
+    - `--persona`: Markdown file whose body becomes the persona (overrides --preset body)
+    - `--runtime`: Local CLI that runs this teammate (claude | codex | gemini | opencode)
+    - `--project-only`: Hire into this folder only, instead of every folder
+  - `tybre agent fire <name> [--force] [--project]` — Retire a teammate (recoverable — the definition file is kept, renamed)
+  - `tybre agent show <name> [--project]` — Show one teammate's persona and effective permissions
+  - `tybre agent talk <name> [--body] [--room] [--project]` — Send a message to a teammate in a room (creates the room if missing)
+    - `name`: Teammate mention name
+    - `--body`: Message body; `-` reads stdin
+    - `--room`: Room id (default: the folder's main room)
+  - `tybre agent reply [--room] [--to] [--body] [--as] [--project]` — Post a reply into a room. This is how a teammate publishes its own answer — the prompt tells it to run exactly this, so thread integrity comes from the flag convention rather than the model's inference
+    - `--room`: Room id the reply belongs to
+    - `--to`: Message id being replied to
+    - `--body`: Reply body; `-` reads stdin
+    - `--as`: Optional check on your own name. Identity comes from the token this process was launched with, so naming another teammate is refused
+  - `tybre agent read [--room] [--before] [--limit] [--project]` — Read a room's recent messages (cursor-based, newest last)
+    - `--before`: Return messages older than this message id
+    - `--limit`: How many to return (default 100, max 500)
 - **`tybre registry`** — Registry integrity audit (dry-run — PH-202)
   - `tybre registry doctor` — Report registry entries whose project directory vanished (orphan uuid) plus cross-index shard issues (orphan / account mismatch). Dry-run — never mutates the registry or the index
+- **`tybre telemetry`** — Query aggregated usage telemetry (screen/feature/funnel counts)
+  - `tybre telemetry report [--days]` — Print top screens/features by count over the last N days (default 7)
 - **`tybre mcp`** — Run the built-in MCP server over STDIO (for Claude Code / agents)
   - `tybre mcp serve [--project] [--http] [--port]` — Serve MCP. STDIO by default; --http adds a localhost-only HTTP transport
     - `--project`: Vault/project root (default: configured vault, else cwd)
@@ -104,6 +129,9 @@ commands and flags at runtime instead of guessing.
 - `open_folder` — Open a directory as a project in the running Tybre.md window (switches/opens the folder like '폴더 열기'). Errors if the app is not running.
 - `open_remote_folder` — Show the remote-folder (SFTP) connect dialog in the running Tybre.md window ('원격 폴더 열기'). The user fills in host/credentials — they are never passed here. Errors if the app is not running.
 - `index_resolve` — Resolve a tybre:// cross-project link to its status (resolved | pending | broken) without opening the target project. Registry/index-backed (XC-002).
+- `teammate_list` — List the AI teammates available in this folder (project ones shadow global ones by name). Read-only: hiring and firing are not available to agents.
+- `room_send` — Post a message into a room as the teammate this session was launched as. Pass 'reply_to' with a message id to answer a specific message instead of starting a new one. You cannot post as another teammate.
+- `room_read` — Read a room's recent messages, newest last. Cursor-based: 'before' returns messages older than that id. Limit defaults to 100 and is capped at 500.
 
 <!-- END GENERATED -->
 
