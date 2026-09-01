@@ -33,8 +33,10 @@ Every command accepts `--json`:
   - `--new-window`: Force a new app launch instead of reusing the open window
   - `--reuse-window`: Accepted for symmetry; reuse is the default behavior
   - `--editor`: Open in $VISUAL/$EDITOR instead of the app
-- `tybre create <path> [--content] [--open]` — Create a note (parent dirs auto-created)
+- `tybre create <path> [--content] [--alias] [--icon] [--open]` — Create a note (parent dirs auto-created). Best practice for agents: keep the FILENAME plain ASCII (stable for links/scripts) and put the human-language title in --alias — the app shows the alias everywhere
   - `--content`: Content to write; `-` reads stdin. `allow_hyphen_values` so a body that starts with `-` (e.g. `---` frontmatter) isn't seen as a flag
+  - `--alias`: Display alias shown instead of the filename (e.g. "회의록 2026" for meeting-notes-2026.md). Stored in .tybre/meta.json, not the file
+  - `--icon`: Emoji icon shown next to the name in the app (Notion-style), e.g. 📝
   - `--open`: Open the note after creating
 - `tybre delete <path> [--force]` — Delete a note (confirms unless --force)
 - `tybre move <src> <dst> [--open]` — Move a file to a new path/directory
@@ -63,6 +65,15 @@ Every command accepts `--json`:
 - `tybre agent-status <state> [--path]` — Report an agent lifecycle state to the running app so the dot/mascot tracks it deterministically (PRD 04 F1). No-op (exit 0) when closed
   - `state`: Lifecycle state: working | waiting | done
   - `--path`: Project dir the agent runs in (usually $CLAUDE_PROJECT_DIR)
+- **`tybre alias`** — Set/get a file or folder's display alias (shown instead of the filename in the app). Pattern: ASCII filename + human-language alias — renames and moves keep the alias attached; links always use the real filename
+  - `tybre alias set <path> <alias> [--project]` — Set the alias shown for a path ("" clears it). The file itself is untouched — the alias lives in the project's .tybre/meta.json
+    - `path`: File or directory (project-relative or absolute)
+    - `alias`: The display name, e.g. "회의록 2026". Empty string clears
+  - `tybre alias get <path> [--project]` — Print a path's alias and icon (or "no alias")
+- **`tybre icon`** — Set a file or folder's emoji icon (Notion-style, shown in the explorer, tabs and quick-open). An empty value clears it
+  - `tybre icon set <path> <icon> [--project]` — Set the emoji icon shown for a path ("" clears it)
+    - `path`: File or directory (project-relative or absolute)
+    - `icon`: One emoji, e.g. 📝. Empty string clears
 - **`tybre links`** — Report orphan notes / broken links, or fix references after a rename
   - `tybre links report [--project]` — Report orphan notes (in/out 0) and broken links (file:line targets)
   - `tybre links fix <old> <new> [--project] [--dry-run] [--apply]` — Rewrite every reference to <old> so it points at <new>. Dry-run by default (lists files that would change); pass --apply to write
@@ -134,6 +145,28 @@ commands and flags at runtime instead of guessing.
 - `room_read` — Read a room's recent messages, newest last. Cursor-based: 'before' returns messages older than that id. Limit defaults to 100 and is capped at 500.
 
 <!-- END GENERATED -->
+
+## Aliases & icons (display meta)
+
+Files should be created with **plain-ASCII filenames** (stable for wikilinks,
+scripts, and git), with the **human-language title as an alias** and an
+optional emoji icon — the app's explorer, tabs and quick-open all show the
+alias/icon while every link and command keeps using the real filename:
+
+```
+tybre create notes/meeting-notes-2026.md --alias "회의록 2026" --icon 📝
+tybre alias set docs "설계 문서"        # works on directories too
+tybre icon set docs 📁
+tybre alias set docs ""                # empty string clears
+```
+
+- Stored in the project's `.tybre/meta.json` (project-relative keys), so it
+  travels with git/sync; the note file itself is never touched.
+- `tybre rename`/`tybre move` keep the alias attached automatically.
+- Wikilinks resolve by filename and NEVER by alias — aliasing cannot break
+  links, and `[[…|display]]` remains the per-link display mechanism.
+- When the user asks for "friendly names", "Korean titles", or Notion-style
+  icons, batch these commands over the relevant files.
 
 ## Inline tags (`#{tag}`)
 
